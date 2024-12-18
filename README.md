@@ -41,7 +41,7 @@
 
    ```bash
    git clone https://github.com/ZeroR0cks/velo1.git
-   cd velo1/velosport
+   cd velo1
    ```
 
 2. Запустите приложение:
