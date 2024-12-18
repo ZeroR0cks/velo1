@@ -40,7 +40,7 @@
 1. Склонируйте репозиторий:
 
    ```bash
-   git clone <https://github.com/ZeroR0cks/velo1.git>
+   git clone https://github.com/ZeroR0cks/velo1.git
    cd velo1/velosport
    ```
 
