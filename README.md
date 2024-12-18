@@ -112,8 +112,8 @@
 │   └── requirements.txt # Список зависимостей проект
 │   
 ├── README.md           # Документация проекта
-├── docker-compose.yml # Конфигурация Docker Compose
-└── build.sh          # Скрипт для запуска приложения
+├── build.sh           # Скрипт для запуска приложения
+└── docker-compose.yml # Конфигурация Docker Compose
 
 ```
 
