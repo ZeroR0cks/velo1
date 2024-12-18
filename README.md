@@ -103,13 +103,13 @@
 ```
 .
 ├── velosport/          # Основная папка проекта
+│   ├── templates/      # HTML-шаблоны
+│   ├   └── index.html  # Основная страница
+│   ├── Dockerfile      # Конфигурация для сборки Docker-образа 
 │   ├── app.py          # Основной файл Flask-приложения
 │   ├── parser.py       # Логика парсинга данных
-│   ├── products.db     # SQLite база данных
-│   ├── requirements.txt # Список зависимостей проекта
-│   ├── Dockerfile      # Конфигурация для сборки Docker-образа
-│   └── templates/      # HTML-шаблоны
-│       └── index.html  # Основная страница
+│   ├── аproducts.db     # SQLite база данных
+│   └── requirements.txt # Список зависимостей проект
 │   
 ├── README.md           # Документация проекта
 ├── docker-compose.yml # Конфигурация Docker Compose
