@@ -102,18 +102,19 @@
 
 ```
 .
-.
 ├── velosport/          # Основная папка проекта
 │   ├── app.py          # Основной файл Flask-приложения
 │   ├── parser.py       # Логика парсинга данных
 │   ├── products.db     # SQLite база данных
 │   ├── requirements.txt # Список зависимостей проекта
 │   ├── Dockerfile      # Конфигурация для сборки Docker-образа
-│   ├── docker-compose.yml # Конфигурация Docker Compose
-│   ├── templates/      # HTML-шаблоны
-│   │   └── index.html  # Основная страница
-│   └── build.sh          # Скрипт для запуска приложения
+│   └── templates/      # HTML-шаблоны
+│       └── index.html  # Основная страница
+│   
 ├── README.md           # Документация проекта
+├── docker-compose.yml # Конфигурация Docker Compose
+└── build.sh          # Скрипт для запуска приложения
+
 ```
 
 
