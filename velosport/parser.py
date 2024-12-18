@@ -2,6 +2,16 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import sqlite3
+from urllib.parse import urlparse
+
+# Класс Product для хранения данных о товаре
+class Product:
+    def __init__(self, name, link, price, image, year):
+        self.name = name
+        self.link = link
+        self.price = price
+        self.image = image
+        self.year = year
 
 # Имя файла базы данных
 DB_FILE = "products.db"
@@ -10,7 +20,7 @@ DB_FILE = "products.db"
 def initialize_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute('''
+    cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -23,26 +33,57 @@ def initialize_db():
     conn.commit()
     conn.close()
 
-# Вставка данных в БД
-def write_to_db(products: list[Product]):
+def validate_product_data(product):
+    
+    if not product.name.strip():
+        return False, "Пустое имя товара"
+
+    
+    if not product.link or not is_valid_url(product.link):
+        return False, "Некорректная ссылка"
+
+
+    
+    if not product.image or not is_valid_url(product.image):
+        return False, "Некорректный URL изображения"
+
+    
+    if product.year != "Не указан" and not re.match(r"^\d{4}$", product.year):
+        return False, "Некорректный год"
+
+    return True, ""
+
+
+def is_valid_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])  # URL должен содержать схему (http, https) и домен
+    except ValueError:
+        return False
+
+
+def write_to_db(products: list):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     for product in products:
-        cursor.execute('''
-            INSERT INTO products (name, link, price, image, year) 
-            VALUES (?, ?, ?, ?, ?)
-        ''', (product.name, product.link, product.price, product.image, product.year))
+        is_valid, reason = validate_product_data(product)
+        if is_valid:
+            cursor.execute(''' 
+                INSERT INTO products (name, link, price, image, year) 
+                VALUES (?, ?, ?, ?, ?)
+            ''', (product.name, product.link, product.price, product.image, product.year))
+        else:
+            print(f"Пропущен товар '{product.name}' из-за: {reason}")
     conn.commit()
     conn.close()
 
-# Извлечение года из названия
+
 def extract_year_from_name(name: str) -> str:
     match = re.search(r"\((\d{4})\)$", name)
     return match.group(1) if match else "Не указан"
 
-# Основной парсер
 def parser(url: str, total_items: int = 3428):
-    initialize_db()  # Создание БД и таблицы
+    initialize_db()  
     page = 1
     count_items = 0
 
@@ -76,7 +117,7 @@ def parser(url: str, total_items: int = 3428):
                     if count_items >= total_items:
                         break
 
-        write_to_db(list_product)  # Запись в БД
+        write_to_db(list_product)  
         page += 1
 
 if __name__ == "__main__":
