@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 import sqlite3
+import subprocess
+import sys
 
 app = Flask(__name__)
 
@@ -11,16 +13,19 @@ DB_FILE = "products.db"
 def create_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
+
+    # Создаем таблицу для продуктов
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             link TEXT NOT NULL,
-            price REAL,
+            price TEXT NOT NULL,
             image TEXT,
             year TEXT
         )
     ''')
+
     conn.commit()
     conn.close()
 
@@ -35,18 +40,12 @@ def load_products():
 
     products = []
     for row in rows:
-        try:
-            price = float(row[2]) if row[2] else None
-        except ValueError:
-            price = None
-
         product = {
             "name": row[0],
             "link": row[1],
-            "price": price,  # Преобразуем цену в float
+            "price": row[2],
             "image": row[3],
             "year": row[4],
-            "in_stock": price is not None
         }
         products.append(product)
     return products
@@ -57,15 +56,23 @@ def sort_products(products, sort_by_price_desc=False, sort_by_price_asc=False, s
     if sort_alphabetically:
         return sorted(products, key=lambda x: x['name'].lower())
     if sort_by_price_desc:
-        return sorted(products, key=lambda x: (not x['in_stock'], -(x['price'] or 0)))
+        return sorted(products, key=lambda x: -(float(x['price']) if x['price'] != "Нет в наличии" else 0))
     if sort_by_price_asc:
-        return sorted(products,
-                      key=lambda x: (not x['in_stock'], x['price'] if x['price'] is not None else float('inf')))
+        return sorted(products, key=lambda x: (float(x['price']) if x['price'] != "Нет в наличии" else 0))
     return products
+
+
+# Функция для запуска парсера
+def run_parser():
+    print("Запуск парсинга данных...")
+    subprocess.run([sys.executable, "parser.py"])  # Запускаем файл parser.py
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    # Запускаем парсер каждый раз при запуске приложения Flask
+    run_parser()
+
     sort_by = request.args.get("sort", "price_desc")  # Получаем текущий способ сортировки
     filter_year = request.args.get("year", "all")  # Получаем текущий фильтр по году
     page = int(request.args.get("page", 1))  # Номер текущей страницы
