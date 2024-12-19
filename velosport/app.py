@@ -8,6 +8,7 @@ app = Flask(__name__)
 # Путь к базе данных SQLite
 DB_FILE = "products.db"
 
+flag = True
 
 # Функция для создания таблицы в базе данных
 def create_db():
@@ -70,9 +71,10 @@ def run_parser():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # Запускаем парсер каждый раз при запуске приложения Flask
-    run_parser()
-
+    global  flag
+    if flag :
+        run_parser()
+        flag = False
     sort_by = request.args.get("sort", "price_desc")  # Получаем текущий способ сортировки
     filter_year = request.args.get("year", "all")  # Получаем текущий фильтр по году
     page = int(request.args.get("page", 1))  # Номер текущей страницы
@@ -133,5 +135,6 @@ def index():
 
 
 if __name__ == "__main__":
-    create_db()  # Создаем базу данных и таблицу при первом запуске
+    create_db()
     app.run(debug=True)
+
