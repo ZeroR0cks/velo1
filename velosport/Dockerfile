@@ -6,6 +6,6 @@ COPY . /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 5000
+ENV SCRIPT=app.py
 
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "python $SCRIPT"]
