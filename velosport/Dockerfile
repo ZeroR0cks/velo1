@@ -1,11 +1,17 @@
+# Используем базовый образ Python
 FROM python:3.9-slim
 
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
+# Копируем файлы проекта в контейнер
 COPY . /app
 
+# Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENV SCRIPT=app.py
+# Открываем порт для приложения
+EXPOSE 5000
 
-CMD ["sh", "-c", "python $SCRIPT"]
+# Команда запуска Flask
+CMD ["python", "app.py"]
