@@ -1,8 +1,8 @@
 services:
   web:
     build:
-      context: .
-      dockerfile: /velosport/Dockerfile
+      context: ./velosport  
+      dockerfile: Dockerfile  
     ports:
       - "5000:5000"
     volumes:
