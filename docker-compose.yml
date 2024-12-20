@@ -1,5 +1,12 @@
-
 services:
+  parser:
+    build:
+      context: .
+      dockerfile: velosport/Dockerfile
+    volumes:
+      - ./velosport:/app
+    command: ["python", "parser.py"]
+
   web:
     build:
       context: .
@@ -10,12 +17,6 @@ services:
       - ./velosport:/app
     environment:
       - FLASK_ENV=development
-    command: ["app.py"]  
-
-  parser:
-    build:
-      context: ./velosport
-      dockerfile: Dockerfile
-    volumes:
-      - ./velosport:/app
-    command: ["parser.py"]  
+    depends_on:
+      - parser  
+    command: ["python", "app.py"]
