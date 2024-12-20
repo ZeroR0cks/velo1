@@ -19,4 +19,4 @@ services:
       - FLASK_ENV=development
     depends_on:
       - parser  
-    command: ["python", "app.py"]
+    command: flask run --host=0.0.0.0 --port=5000
