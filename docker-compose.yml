@@ -3,14 +3,14 @@ services:
   web:
     build:
       context: .
-      dockerfile: /velosport/Dockerfile
+      dockerfile: velosport/Dockerfile
     ports:
       - "5000:5000"
     volumes:
       - ./velosport:/app
     environment:
       - FLASK_ENV=development
-      - SCRIPT=app.py  
+    command: ["app.py"]  
 
   parser:
     build:
@@ -18,5 +18,4 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./velosport:/app
-    environment:
-      - SCRIPT=parser.py  
+    command: ["parser.py"]  
