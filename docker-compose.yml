@@ -1,11 +1,11 @@
-version: '3.8'
-
+version: "3.9"
 services:
   web:
-    build: .
+    build:
+      context: ./velosport
     ports:
       - "5000:5000"
     volumes:
-      - .:/app
-    command: flask run --host=0.0.0.0 --port=5000
-
+      - ./velosport:/app
+    environment:
+      - FLASK_ENV=development
