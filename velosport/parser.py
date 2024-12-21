@@ -82,7 +82,7 @@ def extract_year_from_name(name: str) -> str:
     match = re.search(r"\((\d{4})\)$", name)
     return match.group(1) if match else "Не указан"
 
-def parser(url: str, total_items: int = 300):
+def parser(url: str, total_items: int = 3000):
     initialize_db()  
     page = 1
     count_items = 0
