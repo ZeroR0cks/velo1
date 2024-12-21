@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request
 import sqlite3
-import subprocess
-import sys
 
 app = Flask(__name__)
 
@@ -53,21 +51,27 @@ def load_products():
 
 # Функция сортировки
 def sort_products(products, sort_by_price_desc=False, sort_by_price_asc=False, sort_alphabetically=False):
-    if sort_alphabetically:
-        return sorted(products, key=lambda x: x['name'].lower())
-    if sort_by_price_desc:
-        return sorted(products, key=lambda x: -(float(x['price']) if x['price'] != "Нет в наличии" else 0))
-    if sort_by_price_asc:
-        return sorted(products, key=lambda x: (float(x['price']) if x['price'] != "Нет в наличии" else 0))
-    return products
+    def sort_key(product):
+        if sort_alphabetically:
+            # Для сортировки по алфавиту учитываем только название
+            return product['name'].lower()
 
+        # Для сортировки по цене добавляем флаг доступности
+        availability_flag = 1 if product['price'] == "Нет в наличии" else 0
+        price = float(product['price']) if product['price'] != "Нет в наличии" else 0
 
+        if sort_by_price_desc:
+            return (availability_flag, -price)
+        elif sort_by_price_asc:
+            return (availability_flag, price)
 
+        return availability_flag
+
+    return sorted(products, key=sort_key)
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-
     sort_by = request.args.get("sort", "price_desc")  # Получаем текущий способ сортировки
     filter_year = request.args.get("year", "all")  # Получаем текущий фильтр по году
     page = int(request.args.get("page", 1))  # Номер текущей страницы
@@ -88,7 +92,7 @@ def index():
         products = sort_products(products, sort_alphabetically=True)
 
     # Пагинация
-    items_per_page = 28
+    items_per_page = 32
     total_pages = len(products) // items_per_page + (1 if len(products) % items_per_page > 0 else 0)
 
     # Проверка на допустимый номер страницы
@@ -130,4 +134,3 @@ def index():
 if __name__ == "__main__":
     create_db()
     app.run(debug=True)
-
